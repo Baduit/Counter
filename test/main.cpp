@@ -58,12 +58,42 @@ void test_atomic_counter()
 
 void test_mutex_counter()
 {
+	Counter::BasicMutexCounter<int> counter;
+	assert(counter.get() == 0);
 
+	++counter;
+	assert(counter.get() == 1);
+
+	counter++;
+	assert(counter.get() == 2);
+
+	counter--;
+	assert(counter.get() == 1);
+
+	counter.reset();
+	assert(counter.get() == 0);
+
+	++counter;
 }
 
 void test_shared_mutex_counter()
 {
+	Counter::BasicSharedMutexCounter<int> counter;
+	assert(counter.get() == 0);
 
+	++counter;
+	assert(counter.get() == 1);
+
+	counter++;
+	assert(counter.get() == 2);
+
+	counter--;
+	assert(counter.get() == 1);
+
+	counter.reset();
+	assert(counter.get() == 0);
+
+	++counter;
 }
 
 int main()

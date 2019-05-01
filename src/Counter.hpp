@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <thread>
 #include <atomic>
+#include <mutex>
+#include <shared_mutex>
 
 namespace Counter
 {
@@ -34,7 +36,7 @@ class BasicAtomicCounter
 	public:
 		// Rule of 0
 
-		// Integral values are normally about the same size as a pointer or shorter so no need to pass them as const&
+		// with an atomic value we can only access a copy of the value (and return the atomic directly does not seem like a good idea)
 		T       get() const { return _value.load(); }
 		void    reset() { _value.store(0); }
 
@@ -49,9 +51,109 @@ class BasicAtomicCounter
 		std::atomic<T>   _value { 0 };
 };
 
+template<typename T, typename = typename std::enable_if_t<std::is_integral_v<T>>>
+class BasicMutexCounter
+{
+	public:
+		// Rule of 0
+
+		// never return reference to something you want to protect with a mutex
+		T       get() const
+		{
+			std::lock_guard	lock(_mutex);
+			return _value;
+		}
+
+		void    reset()
+		{
+			std::lock_guard	lock(_mutex);
+			_value = 0;
+		}
+
+		BasicMutexCounter&   operator++()
+		{
+			std::lock_guard	lock(_mutex);
+			++_value;
+		}
+
+		BasicMutexCounter&   operator++(int)
+		{
+			std::lock_guard	lock(_mutex);
+			_value++;
+		}
+
+		BasicMutexCounter&   operator--()
+		{
+			std::lock_guard	lock(_mutex);
+			--_value;
+		}
+
+		BasicMutexCounter&   operator--(int)
+		{
+			std::lock_guard	lock(_mutex);
+			_value--;
+		}
+
+
+	private:
+		T   				_value = 0;
+		mutable std::mutex	_mutex;
+};
+
+template<typename T, typename = typename std::enable_if_t<std::is_integral_v<T>>>
+class BasicSharedMutexCounter
+{
+	public:
+		// Rule of 0
+
+		// never return reference to something you want to protect with a mutex
+		T       get() const
+		{
+			std::shared_lock	lock(_mutex);
+			return _value;
+		}
+
+		void    reset()
+		{
+			std::lock_guard	lock(_mutex);
+			_value = 0;
+		}
+
+		BasicSharedMutexCounter&   operator++()
+		{
+			std::lock_guard	lock(_mutex);
+			++_value;
+		}
+
+		BasicSharedMutexCounter&   operator++(int)
+		{
+			std::lock_guard	lock(_mutex);
+			_value++;
+		}
+
+		BasicSharedMutexCounter&   operator--()
+		{
+			std::lock_guard	lock(_mutex);
+			--_value;
+		}
+
+		BasicSharedMutexCounter&   operator--(int)
+		{
+			std::lock_guard	lock(_mutex);
+			_value--;
+		}
+
+
+	private:
+		T   						_value = 0;
+		mutable std::shared_mutex	_mutex;
+};
+
 // aliases
 using Counter = BasicCounter<int>;
 using AtomicCounter = BasicAtomicCounter<int>;
+using MutexCounter = BasicMutexCounter<int>;
+using SharedMutexCounter = BasicSharedMutexCounter<int>;
 
 
 }
