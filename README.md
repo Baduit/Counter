@@ -1,6 +1,6 @@
 # Counter
 ## Overall description
-This is a header only library. Its goal is to create counter easily without writing boilerplate.
+This is a C++ 17 header only library. Its goal is to create counter easily without writing boilerplate.
 
 In this library there is 2 types of counters: "normal" counters (Counter) and thread safe counters (AtomicCounter, MutexCounter and SharedMutexCounter).
 
@@ -19,6 +19,7 @@ The "normal" counter is trivially copyable but the thread safe counters are not 
 
 ## Add it to your project
 Just put the header __Counter.hpp__ in your path/sources.
+Note that it needs C++ 17 because it uses std::shared_mutex and template deduction on class. Without this it should only need C++ 11.
 
 ## Why Counter is an alias for BasicCounter<int>?
 All the counters classes are created with a basic templated class which allows to choose the underlying type used, then there is an alias to reduce the boilerplate code when the underlying type is not important.
