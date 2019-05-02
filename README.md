@@ -32,7 +32,7 @@ There is 3 types of thread safe counters:
 * __MutexCounter__ using the std::mutex to lock the access to the value.
 * __SharedMutexCounter__ using the std::shared type to lock the access to the value. Better than MutexCounter if there is 1 (or few) writer(s) and severals readers.
 
-I advise to use the AtomicCounter by default in multithreaded applications, but the best way to choose is to makes benchmark if there is performance issues.
+I advise to use the AtomicCounter by default in multithreaded applications, but the best way to choose is to makes benchmark if there are performance issues.
 
 ## Tests
 There is some basic tests, juste use cmake (or compile it manually that's not hard) and run the executable test.out.
