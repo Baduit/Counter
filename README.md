@@ -19,7 +19,7 @@ The "normal" counter is trivially copyable but the thread safe counters are not 
 
 ## Add it to your project
 Just put the header __Counter.hpp__ in your path/sources.
-Note that it needs C++ 17 because it uses std::shared_mutex and template deduction on class. Without this it should only need C++ 11.
+Note that it requires C++ 17 because it uses std::shared_mutex and template deduction on class. Without this it should only require C++ 11.
 
 ## Why Counter is an alias for BasicCounter<int>?
 All the counters classes are created with a basic templated class which allows to choose the underlying type used, then there is an alias to reduce the boilerplate code when the underlying type is not important.
