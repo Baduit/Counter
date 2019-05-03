@@ -19,11 +19,11 @@ class BasicCounter
 		T       get() const { return _value; }
 		void    reset() { _value = 0; }
 
-		BasicCounter&   operator++() { ++_value; }
-		BasicCounter&   operator++(int) { _value++; }
+		BasicCounter&   operator++() { ++_value; return *this; }
+		BasicCounter&   operator++(int) { _value++; return *this; }
 
-		BasicCounter&   operator--() { --_value; }
-		BasicCounter&   operator--(int) { _value--; }
+		BasicCounter&   operator--() { --_value; return *this; }
+		BasicCounter&   operator--(int) { _value--; return *this; }
 
 
 	private:
@@ -38,10 +38,10 @@ class BasicAtomicCounter
 		BasicAtomicCounter() = default;
 
 		BasicAtomicCounter(const BasicAtomicCounter& other) { _value = other.get(); }
-		BasicAtomicCounter& operator=(const BasicAtomicCounter& other) { _value = other.get(); }
+		BasicAtomicCounter& operator=(const BasicAtomicCounter& other) { _value = other.get(); return *this; }
 
 		BasicAtomicCounter(BasicAtomicCounter&& other) { _value = other.get(); }
-		BasicAtomicCounter operator=(BasicAtomicCounter&& other) { _value = other.get(); }
+		BasicAtomicCounter operator=(BasicAtomicCounter&& other) { _value = other.get(); return *this; }
 
 		virtual ~BasicAtomicCounter() = default;
 
@@ -49,11 +49,11 @@ class BasicAtomicCounter
 		T       get() const { return _value.load(); }
 		void    reset() { _value.store(0); }
 
-		BasicAtomicCounter&   operator++() { _value.fetch_add(1); }
-		BasicAtomicCounter&   operator++(int) { _value.fetch_add(1); }
+		BasicAtomicCounter&   operator++() { _value.fetch_add(1); return *this; }
+		BasicAtomicCounter&   operator++(int) { _value.fetch_add(1); return *this; }
 
-		BasicAtomicCounter&   operator--() { _value.fetch_sub(1); }
-		BasicAtomicCounter&   operator--(int) { _value.fetch_sub(1); }
+		BasicAtomicCounter&   operator--() { _value.fetch_sub(1); return *this; }
+		BasicAtomicCounter&   operator--(int) { _value.fetch_sub(1); return *this; }
 
 
 	private:
@@ -77,6 +77,7 @@ class BasicMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			_value = other.get();
+			return *this;
 		}
 
 		BasicMutexCounter(BasicMutexCounter&& other)
@@ -88,6 +89,7 @@ class BasicMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			_value = other.get();
+			return *this;
 		}
 
 		virtual ~BasicMutexCounter() = default;
@@ -109,24 +111,28 @@ class BasicMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			++_value;
+			return *this;
 		}
 
 		BasicMutexCounter&   operator++(int)
 		{
 			std::lock_guard	lock(_mutex);
 			_value++;
+			return *this;
 		}
 
 		BasicMutexCounter&   operator--()
 		{
 			std::lock_guard	lock(_mutex);
 			--_value;
+			return *this;
 		}
 
 		BasicMutexCounter&   operator--(int)
 		{
 			std::lock_guard	lock(_mutex);
 			_value--;
+			return *this;
 		}
 
 
@@ -152,6 +158,7 @@ class BasicSharedMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			_value = other.get();
+			return *this;
 		}
 
 		BasicSharedMutexCounter(BasicSharedMutexCounter&& other)
@@ -163,6 +170,7 @@ class BasicSharedMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			_value = other.get();
+			return *this;
 		}
 
 		virtual ~BasicSharedMutexCounter() = default;
@@ -184,24 +192,28 @@ class BasicSharedMutexCounter
 		{
 			std::lock_guard	lock(_mutex);
 			++_value;
+			return *this;
 		}
 
 		BasicSharedMutexCounter&   operator++(int)
 		{
 			std::lock_guard	lock(_mutex);
 			_value++;
+			return *this;
 		}
 
 		BasicSharedMutexCounter&   operator--()
 		{
 			std::lock_guard	lock(_mutex);
 			--_value;
+			return *this;
 		}
 
 		BasicSharedMutexCounter&   operator--(int)
 		{
 			std::lock_guard	lock(_mutex);
 			_value--;
+			return *this;
 		}
 
 
