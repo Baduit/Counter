@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <list>
 
 #include "Counter.hpp"
 
@@ -20,8 +21,39 @@
 ** Because to copy/move a counter it must read/write the value 
 ** and to ensure there is no data race/race condition there is a cost 
 */
+
 void example()
 {
+    /*
+    ** Multithread example
+    */
+    // Create your counter
+    Counter::SharedMutexCounter c;
+
+    // Declare a lambda which will increment the counter
+    auto lambda_increment =
+        [&]()
+        {
+            for (int i = 0; i < 10000; ++i)
+                ++c;
+            return 0;
+        }
+    ;
+    
+    // Create threads which will use the lambda
+    std::list<std::thread> threads;
+    for (int j = 0; j < 10;++j)
+        threads.emplace_back(lambda_increment);
+    
+    // Wait until the threads are done
+    for (auto& t: threads)
+        t.join();
+    
+    // Print the result
+    std::cout << c.get() << std::endl;
+    
+    // Assert that we have the correct result
+    assert(c.get() == 100000);
 }
 
 void test_basic_counter()
