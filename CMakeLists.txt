@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(hello)
 
-set (CMAKE_CXX_FLAGS "--std=gnu++17")
+add_definitions(-std=c++17 -Wextra -Wall -Wsign-conversion -Wfloat-equal -pedantic -Wredundant-decls -Wshadow -Wpointer-arith) 
 
 find_package(Threads)
 
