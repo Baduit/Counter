@@ -12,7 +12,41 @@ In this library there is 2 types of counters: "normal" counters (Counter) and th
 * To decrement the counter use the __operator--__.
 
 ### Example
- TODO
+```C++
+void example()
+{
+    /*
+    ** Multithread example
+    */
+    // Create your counter
+    Counter::SharedMutexCounter c;
+
+    // Declare a lambda which will increment the counter
+    auto lambda_increment =
+        [&]()
+        {
+            for (int i = 0; i < 10000; ++i)
+                ++c;
+            return 0;
+        }
+    ;
+    
+    // Create threads which will use the lambda
+    std::list<std::thread> threads;
+    for (int j = 0; j < 10;++j)
+        threads.emplace_back(lambda_increment);
+    
+    // Wait until the threads are done
+    for (auto& t: threads)
+        t.join();
+    
+    // Print the result
+    std::cout << c.get() << std::endl;
+    
+    // Assert that we have the correct result
+    assert(c.get() == 100000);
+}
+```
 
 ### Note
 The "normal" counter is trivially copyable but the thread safe counters are not trivially copyable nor trivially movable.
